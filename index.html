@@ -96,6 +96,7 @@
   .start, .help {
     position: fixed; inset: 0; z-index: 10;
     display: grid; place-items: center; overflow: auto;
+    grid-template-columns: minmax(0, 1fr);
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
@@ -103,6 +104,7 @@
   .start { background: radial-gradient(ellipse at 50% 40%, var(--desk-hi) 0%, var(--desk) 70%); }
   .help { background: rgba(11, 10, 9, 0.8); }
   .start-box {
+    box-sizing: border-box;
     width: min(620px, 100%); background: var(--paper); color: var(--ink);
     padding: clamp(20px, 4vw, 44px); display: grid; gap: 14px; justify-items: start;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55); rotate: -0.6deg;
@@ -117,7 +119,7 @@
   .start-btn:hover { background: var(--red); }
   .start-tip { font-family: var(--f-serif); font-size: 15px; color: #4a443d; }
   .help-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-family: var(--f-serif); font-size: 15px; line-height: 1.4; }
-  .help .help-list { background: var(--paper); color: var(--ink); padding: 26px 30px; max-width: 640px; font-size: 17px; }
+  .help .help-list { box-sizing: border-box; width: min(640px, 100%); background: var(--paper); color: var(--ink); padding: 26px 30px; max-width: 640px; font-size: 17px; }
   kbd { font-family: var(--f-type); font-size: 0.85em; border: 1px solid currentColor; padding: 0 6px; margin-right: 2px; white-space: nowrap; }
 
   @media (max-width: 640px) {
