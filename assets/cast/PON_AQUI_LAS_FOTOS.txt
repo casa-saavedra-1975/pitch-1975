@@ -1,0 +1,8 @@
+Fotos opcionales para la diapositiva de casting (se ven en blanco y negro).
+Pon aquí estos archivos .jpg, con estos nombres exactos, y aparecen solas:
+  pedro-alonso.jpg
+  najwa-nimri.jpg
+  milena-smit.jpg
+  miguel-bernardeau.jpg
+  ana-de-armas.jpg
+Mejor en vertical o cuadradas, con la cara en la parte de arriba.

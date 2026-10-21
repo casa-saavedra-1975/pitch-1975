@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:,">
+<title>1975 · Pitch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=UnifrakturMaguntia&display=swap">
+<style>
+  /* Escena: una mesa de redacción a oscuras con la presentación encajada en 16:9; el chrome del presentador usa el papel y la tinta de las diapositivas. */
+  :root {
+    --desk: #0b0a09;
+    --desk-hi: #2b2723;
+    --paper: #eae3d2;
+    --ink: #1a1714;
+    --red: #b0261d;
+    --dim: rgba(234, 227, 210, 0.62);
+    --scrim: rgba(11, 10, 9, 0.9);
+    --f-head: "Headline", "Anton", "Impact", "Arial Narrow", sans-serif;
+    --f-type: "Typewriter", "Special Elite", "Courier New", monospace;
+    --f-serif: "Serif", "Old Standard TT", Georgia, "Times New Roman", serif;
+    --f-slab: "Slab", "Alfa Slab One", Rockwell, Georgia, serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body { background: var(--desk); color: var(--paper); overflow: hidden; }
+
+  .app {
+    position: fixed; inset: 0;
+    display: grid; place-items: center;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+    background: radial-gradient(ellipse at 50% 45%, var(--desk-hi) 0%, var(--desk) 75%);
+  }
+  :root:fullscreen .app { padding: 0; background: #000; }
+  .app.idle, .app.idle * { cursor: none; }
+
+  .frame {
+    position: relative;
+    width: min(100%, calc((100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 16 / 9));
+    width: min(100%, calc((100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) * 16 / 9));
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    container-type: inline-size;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    background: #000;
+  }
+  :root:fullscreen .frame { box-shadow: none; }
+  .stage { position: absolute; inset: 0; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
+  .black { position: absolute; inset: 0; background: #000; z-index: 4; }
+
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+  /* Barra del presentador */
+  .hud {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+    padding: 4cqw 2.2cqw 1.4cqw;
+    background: linear-gradient(180deg, transparent, rgba(11, 10, 9, 0.82));
+    display: grid; gap: 0.9cqw;
+    opacity: 0; transition: opacity 0.35s ease;
+    pointer-events: none;
+  }
+  .hud.on { opacity: 1; pointer-events: auto; }
+  .segs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0.5cqw; }
+  .seg { height: max(4px, 0.35cqw); background: rgba(234, 227, 210, 0.25); padding: 0; }
+  .seg.done { background: var(--dim); }
+  .seg.now { background: var(--red); }
+  .seg:hover { background: var(--paper); }
+  .meta { display: flex; align-items: center; gap: 1.2cqw; min-width: 0; }
+  .count { font-family: var(--f-head); font-size: max(13px, 1.5cqw); letter-spacing: 0.08em; font-variant-numeric: tabular-nums; }
+  .title { font-family: var(--f-type); font-size: max(11px, 1.1cqw); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .keys { display: flex; gap: 0.5cqw; flex-wrap: wrap; justify-content: flex-end; }
+  .keys button {
+    font-family: var(--f-type); font-size: max(11px, 1cqw); letter-spacing: 0.08em;
+    padding: 0.35cqw 0.8cqw; border: 1px solid rgba(234, 227, 210, 0.4);
+  }
+  .keys button:hover, .keys button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+
+  /* Guion */
+  .notes {
+    position: absolute; left: 2.2cqw; right: 2.2cqw; bottom: 7.2cqw; z-index: 3;
+    background: var(--scrim); border-left: 0.4cqw solid var(--red);
+    padding: 1.2cqw 1.6cqw; display: grid; gap: 0.6cqw;
+  }
+  .notes-head { display: flex; justify-content: space-between; gap: 1cqw; flex-wrap: wrap; font-family: var(--f-type); font-size: max(11px, 1cqw); letter-spacing: 0.12em; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .notes-head .over { color: #e0645a; }
+  .notes p { margin: 0; font-family: var(--f-serif); font-size: max(13px, 1.75cqw); line-height: 1.38; max-width: 70ch; text-wrap: pretty; }
+  .notes-next { font-family: var(--f-type); font-size: max(10px, 0.95cqw); color: var(--dim); }
+
+  /* Portada del reproductor */
+  .start, .help {
+    position: fixed; inset: 0; z-index: 10;
+    display: grid; place-items: center; overflow: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+  }
+  .start { background: radial-gradient(ellipse at 50% 40%, var(--desk-hi) 0%, var(--desk) 70%); }
+  .help { background: rgba(11, 10, 9, 0.8); }
+  .start-box {
+    width: min(620px, 100%); background: var(--paper); color: var(--ink);
+    padding: clamp(20px, 4vw, 44px); display: grid; gap: 14px; justify-items: start;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55); rotate: -0.6deg;
+  }
+  .start-kicker { font-family: var(--f-type); font-size: 13px; letter-spacing: 0.2em; color: var(--red); }
+  .start-title { font-family: var(--f-slab); font-size: clamp(72px, 16vw, 132px); line-height: 0.9; }
+  .start-sub { font-family: var(--f-serif); font-style: italic; font-size: 20px; }
+  .start-btn {
+    font-family: var(--f-head); font-size: 26px; letter-spacing: 0.08em;
+    background: var(--ink); color: var(--paper); padding: 10px 26px; margin-block: 6px;
+  }
+  .start-btn:hover { background: var(--red); }
+  .start-tip { font-family: var(--f-serif); font-size: 15px; color: #4a443d; }
+  .help-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-family: var(--f-serif); font-size: 15px; line-height: 1.4; }
+  .help .help-list { background: var(--paper); color: var(--ink); padding: 26px 30px; max-width: 640px; font-size: 17px; }
+  kbd { font-family: var(--f-type); font-size: 0.85em; border: 1px solid currentColor; padding: 0 6px; margin-right: 2px; white-space: nowrap; }
+
+  @media (max-width: 640px) {
+    .keys button:not([aria-label]) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hud { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>window.__PITCH_ASSETS__ = "assets";</script>
+<script src="inline.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
